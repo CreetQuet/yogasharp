@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YogaSharp", "YogaSharp\YogaSharp.csproj", "{28BD1E73-390C-4228-9BE3-D7F3FB64A75E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{AFAF2F05-2970-4DC7-8340-6E543E87748C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{28BD1E73-390C-4228-9BE3-D7F3FB64A75E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28BD1E73-390C-4228-9BE3-D7F3FB64A75E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28BD1E73-390C-4228-9BE3-D7F3FB64A75E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28BD1E73-390C-4228-9BE3-D7F3FB64A75E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFAF2F05-2970-4DC7-8340-6E543E87748C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFAF2F05-2970-4DC7-8340-6E543E87748C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFAF2F05-2970-4DC7-8340-6E543E87748C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFAF2F05-2970-4DC7-8340-6E543E87748C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

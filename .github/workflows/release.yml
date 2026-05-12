@@ -1,0 +1,96 @@
+name: Build and Pack NuGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-native:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: linux-x64
+          - os: windows-latest
+            artifact_name: win-x64
+          - os: macos-13
+            artifact_name: osx-x64
+          - os: macos-14
+            artifact_name: osx-arm64
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build Native (Linux / macOS)
+        if: runner.os != 'Windows'
+        run: |
+          cd YogaSharp.Native
+          chmod +x build.sh
+          ./build.sh
+          
+      - name: Build Native (Windows)
+        if: runner.os == 'Windows'
+        shell: cmd
+        run: |
+          cd YogaSharp.Native
+          build_windows.bat
+          
+      - name: Upload Native Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-artifacts-${{ matrix.artifact_name }}
+          path: YogaSharp.Native/artifacts/
+
+  pack-nuget:
+    needs: build-native
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
+          
+      - name: Download Linux Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: native-artifacts-linux-x64
+          path: YogaSharp.Native/artifacts/
+          
+      - name: Download Windows Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: native-artifacts-win-x64
+          path: YogaSharp.Native/artifacts/
+          
+      - name: Download macOS (Intel) Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: native-artifacts-osx-x64
+          path: YogaSharp.Native/artifacts/
+          
+      - name: Download macOS (ARM64) Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: native-artifacts-osx-arm64
+          path: YogaSharp.Native/artifacts/
+          
+      - name: Pack NuGet
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          if [ "${{ github.event.release.prerelease }}" == "true" ]; then
+            VERSION="${VERSION}-preview"
+          fi
+          dotnet pack YogaSharp/YogaSharp.csproj -c Release -p:PackageVersion=$VERSION -o ./out
+          
+      - name: Upload NuGet Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: ./out/*.nupkg
