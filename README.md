@@ -1,77 +1,92 @@
-# YogaSharp
+<div align="center">
+  <img src="./assets/logo.svg" alt="YogaSharp Logo" width="128" height="128">
+  <h1>YogaSharp</h1>
+  <p><b>A modern, zero-allocation, cross-platform .NET wrapper for the Facebook Yoga layout engine.</b></p>
+</div>
 
-A cross-platform native layout engine integration layer for a future declarative UI framework. This wraps Facebook's Yoga engine (version **3.2.1**).
+---
 
-## Architecture
+**YogaSharp** provides a highly optimized, allocation-free .NET API over the widely-used [Yoga](https://github.com/facebook/yoga) layout engine by Meta. It allows you to build complex Flexbox layouts in C# with native performance, making it the perfect foundational layer for game engines (like Unity or Godot) or custom retained-mode UI frameworks.
 
-This solution contains two main components:
-1. **`YogaSharp.Native`**: A CMake project that compiles Facebook Yoga into a cross-platform shared library (`.dll`, `.so`, `.dylib`).
-2. **`YogaSharp`**: A .NET 8 class library that provides safe, managed P/Invoke wrappers (`ILayoutNode`, `ILayoutEngine`) over the Yoga C API.
+## ✨ Features
 
-## 1. Native Build Instructions
+- **Zero-Allocation Hot Path**: Layout evaluation (`CalculateLayout()`), properties, and result fetching (`.Layout`) trigger absolutely zero heap allocations, relieving pressure from the .NET Garbage Collector.
+- **Modern .NET API**: Supports `.NET 8.0, 9.0, and 10.0` utilizing `readonly struct`, safe memory handles, and standard C# naming conventions.
+- **Cross-Platform Native Binaries**: Distributed automatically via NuGet. Runs on Windows (`win-x64`), Linux (`linux-x64`), and macOS (`osx-arm64`) out of the box.
+- **Engine Agnostic**: Perfect for rendering UI in 2D or 3D spaces. No dependencies on UI toolkits (WPF, Avalonia, MAUI, etc.).
 
-### Prerequisites
-- CMake 3.13+
-- C++20 compatible compiler (MSVC, GCC, Clang)
-- Bash (Linux/macOS) or Command Prompt (Windows)
+## 📦 Installation
 
-### Building for Linux or macOS
-Run the `build.sh` script inside the `YogaSharp.Native` directory.
-```bash
-cd YogaSharp.Native
-chmod +x build.sh
-./build.sh
-```
-This automatically detects your OS and architecture (e.g. `linux-x64`, `osx-arm64`) and copies the resulting `libyoga.so` or `libyoga.dylib` to `YogaSharp.Native/artifacts/<os>-<arch>/`.
+*(Packages will soon be available via NuGet).*
 
-### Building for Windows
-Run the `build_windows.bat` script inside the `YogaSharp.Native` directory.
-```cmd
-cd YogaSharp.Native
-build_windows.bat
-```
-This builds for `win-x64` and places `yoga.dll` in `YogaSharp.Native/artifacts/win-x64/`.
+The package is split into two logical pieces:
+- `YogaSharp.Core`: Contains the native interop, memory safe-handles, and fundamental structures. Native binaries are distributed within this package.
+- `YogaSharp.Layout`: Provides the modern, ergonomic `YogaNode` object tree API.
 
-## 2. Managed .NET Wrapper
+## 🚀 Quick Start
 
-The .NET layer is located in `YogaSharp`. 
-
-- Targets **.NET 8.0**
-- Hides all raw `IntPtr` and raw Yoga C-API calls behind `ILayoutNode` and `ILayoutEngine`.
-- Handles automatic disposal of child node trees via safe `IDisposable` patterns.
-- Automatically resolves the correct platform binary at runtime using `NativeLibrary.SetDllImportResolver`.
-
-## 3. Example Usage
+Here is a quick example of setting up a root UI container with a sidebar and content area using standard Flexbox properties:
 
 ```csharp
-using YogaSharp;
+using System;
+using YogaSharp.Core;
+using YogaSharp.Layout;
 
-using var engine = new YogaLayoutEngine();
+// 1. Initialize the tree
+// Notice: You only need to Dispose the root. It owns its children.
+using var root = new YogaNode
+{
+    Width = 800,
+    Height = 600,
+    Padding = 20,
+    FlexDirection = FlexDirection.Row // Layout elements horizontally
+};
 
-using var root = engine.CreateNode();
-root.Width = 500;
-root.Height = 500;
-root.FlexDirection = FlexDirection.Column;
+// 2. Setup a Sidebar
+var sidebar = new YogaNode
+{
+    Width = 200,
+    MarginRight = 20
+};
 
-using var child = engine.CreateNode();
-child.FlexGrow = 1;
+// 3. Setup a Content Area that fills the remaining space
+var content = new YogaNode
+{
+    FlexGrow = 1 // Take up remaining width
+};
 
-root.AddChild(child);
+// 4. Build the hierarchy
+root.AddChild(sidebar);
+root.AddChild(content);
 
-// Computes the layout with Yoga
+// 5. Compute the Layout!
 root.CalculateLayout();
 
-Console.WriteLine($"Child layout: {child.Layout.X}, {child.Layout.Y}, {child.Layout.Width}, {child.Layout.Height}");
+// 6. Access the results (zero allocation!)
+Console.WriteLine($"Sidebar: X={sidebar.Layout.X}, Y={sidebar.Layout.Y}, W={sidebar.Layout.Width}, H={sidebar.Layout.Height}");
+Console.WriteLine($"Content: X={content.Layout.X}, Y={content.Layout.Y}, W={content.Layout.Width}, H={content.Layout.Height}");
 ```
 
-## 4. Packaging and Distribution
+### Layout Visualization
 
-The `YogaSharp.csproj` is configured to automatically package the native artifacts into the NuGet structure. 
-To build the NuGet package:
+<div align="center">
+  <img src="./assets/layout-example.svg" alt="YogaSharp Layout Math Example" width="80%">
+</div>
 
-```bash
-cd YogaSharp
-dotnet pack -c Release
-```
+## 🏗️ Architecture & Memory
 
-This will produce a `YogaSharp.1.0.0.nupkg` which includes the correct `runtimes/` directory for `win-x64`, `linux-x64`, `osx-x64`, and `osx-arm64`. Any project consuming this NuGet package will automatically copy the correct native binary for their platform during execution.
+YogaSharp implements a strict ownership model to prevent memory leaks while keeping C# ergonomics pleasant.
+
+- Native pointers (`IntPtr`) are never exposed publicly. They are safely enclosed within `SafeHandle` wrappers.
+- The parent `YogaNode` owns its children. Disposing the parent cascades destruction natively and managed-side.
+- Read more in the [Architecture Guide](./Architecture.md) and [Memory Ownership Rules](./Memory/Ownership.md).
+
+## ⚖️ Legal & Attribution
+
+This project is built around the **Facebook Yoga** engine, an open-source project by Meta Platforms, Inc.
+
+- **YogaSharp** code wrapper is licensed under the [MIT License](./LICENSE).
+- The underlying **Yoga C++ Engine** is licensed under the MIT License by Facebook, Inc. 
+- Please refer to [THIRD-PARTY-NOTICES.txt](./THIRD-PARTY-NOTICES.txt) for the full Meta copyright notice and license.
+
+*YogaSharp is not officially endorsed by or affiliated with Meta Platforms, Inc.*

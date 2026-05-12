@@ -92,8 +92,11 @@ jobs:
           fi
           echo "VERSION=$V" >> $GITHUB_OUTPUT
           
-      - name: Pack YogaSharp
-        run: dotnet pack YogaSharp/YogaSharp.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} -o ./out
+      - name: Pack YogaSharp.Core
+        run: dotnet pack YogaSharp.Core/YogaSharp.Core.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} -o ./out
+
+      - name: Pack YogaSharp.Layout
+        run: dotnet pack YogaSharp.Layout/YogaSharp.Layout.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} -o ./out
           
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4

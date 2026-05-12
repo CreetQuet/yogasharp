@@ -1,51 +1,37 @@
 using System.Runtime.InteropServices;
+using YogaSharp.Core.Interop;
 
-namespace YogaSharp;
+namespace YogaSharp.Core.Internal;
 
-internal enum YGEdge
-{
-    Left = 0,
-    Top = 1,
-    Right = 2,
-    Bottom = 3,
-    Start = 4,
-    End = 5,
-    Horizontal = 6,
-    Vertical = 7,
-    All = 8
-}
+internal enum YGEdge { Left, Top, Right, Bottom, Start, End, Horizontal, Vertical, All }
 
-internal enum YGGutter
-{
-    Column = 0,
-    Row = 1,
-    All = 2
-}
+internal enum YGGutter { Column, Row, All }
 
-internal enum YGDirection
-{
-    Inherit = 0,
-    LTR = 1,
-    RTL = 2
-}
+internal enum YGDirection { Inherit, LTR, RTL }
 
-internal static class YogaNative
-{
+internal enum YGUnit { Undefined, Point, Percent, Auto }
+
+internal static class YogaNative {
     private const string DllName = "yoga";
 
-    static YogaNative()
-    {
+    static YogaNative() {
         NativeLoader.Initialize();
     }
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern IntPtr YGConfigNew();
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGConfigFree(IntPtr config);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern IntPtr YGNodeNew();
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void YGNodeFree(IntPtr node);
+    public static extern IntPtr YGNodeNewWithConfig(IntPtr config);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
-    public static extern void YGNodeFreeRecursive(IntPtr node);
+    public static extern void YGNodeFree(IntPtr node);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeInsertChild(IntPtr node, IntPtr child, uint index);
@@ -60,7 +46,6 @@ internal static class YogaNative
     public static extern void YGNodeCalculateLayout(IntPtr node, float availableWidth, float availableHeight,
         YGDirection parentDirection);
 
-    // Layout
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern float YGNodeLayoutGetLeft(IntPtr node);
 
@@ -73,12 +58,23 @@ internal static class YogaNative
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern float YGNodeLayoutGetHeight(IntPtr node);
 
-    // Style - Dimensions
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetWidth(IntPtr node, float width);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetWidthPercent(IntPtr node, float width);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetWidthAuto(IntPtr node);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetHeight(IntPtr node, float height);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetHeightPercent(IntPtr node, float height);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetHeightAuto(IntPtr node);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetMinWidth(IntPtr node, float minWidth);
@@ -92,7 +88,6 @@ internal static class YogaNative
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetMaxHeight(IntPtr node, float maxHeight);
 
-    // Style - Margins / Padding / Gap
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetPadding(IntPtr node, YGEdge edge, float padding);
 
@@ -105,7 +100,6 @@ internal static class YogaNative
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetPosition(IntPtr node, YGEdge edge, float position);
 
-    // Style - Flex
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetFlexDirection(IntPtr node, int flexDirection);
 
@@ -116,7 +110,19 @@ internal static class YogaNative
     public static extern void YGNodeStyleSetAlignItems(IntPtr node, int alignItems);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetAlignSelf(IntPtr node, int alignSelf);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetPositionType(IntPtr node, int positionType);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetFlexWrap(IntPtr node, int flexWrap);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetOverflow(IntPtr node, int overflow);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetDisplay(IntPtr node, int display);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetFlexGrow(IntPtr node, float flexGrow);
@@ -125,5 +131,20 @@ internal static class YogaNative
     public static extern void YGNodeStyleSetFlexShrink(IntPtr node, float flexShrink);
 
     [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetFlexBasis(IntPtr node, float flexBasis);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetFlexBasisPercent(IntPtr node, float flexBasis);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeStyleSetFlexBasisAuto(IntPtr node);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
     public static extern void YGNodeStyleSetAspectRatio(IntPtr node, float aspectRatio);
+
+    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    public delegate ulong YGMeasureFunc(IntPtr node, float width, int widthMode, float height, int heightMode);
+
+    [DllImport(DllName, CallingConvention = CallingConvention.Cdecl)]
+    public static extern void YGNodeSetMeasureFunc(IntPtr node, YGMeasureFunc? measureFunc);
 }

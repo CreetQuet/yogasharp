@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>YogaSharp.Layout</PackageId>
+        <Version>1.0.2-preview</Version>
+        <Authors>CreetQuet</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>logo.svg</PackageIcon>
+        <Description>Managed modern layout API for Yoga layout engine.</Description>
+        <Title>YogaSharp.Layout</Title>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Include="..\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="\" />
+        <None Include="..\assets\logo.svg" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\YogaSharp.Core\YogaSharp.Core.csproj" />
+    </ItemGroup>
+
+</Project>

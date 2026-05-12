@@ -1,0 +1,44 @@
+<svg width="840" height="640" viewBox="0 0 840 640" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .root-box { fill: #1e293b; stroke: #334155; stroke-width: 2; rx: 12; stroke-dasharray: 8 4;}
+      .sidebar { fill: #3b82f6; rx: 8; }
+      .content { fill: #10b981; rx: 8; }
+      .text-title { fill: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 24px; font-weight: 600; text-anchor: middle; }
+      .text-sub { fill: #e2e8f0; font-family: "Fira Code", monospace; font-size: 14px; text-anchor: middle; }
+      .text-note { fill: #94a3b8; font-family: "Fira Code", monospace; font-size: 14px; }
+    </style>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="840" height="640" class="bg" />
+
+  <!-- Root box: x=20, y=20, width=800, height=600 -->
+  <rect x="20" y="20" width="800" height="600" class="root-box" />
+  <text x="25" y="15" class="text-note">Root Node (Width: 800, Height: 600, Padding: 20)</text>
+
+  <!-- Sidebar: 
+       X = 20(root) + 20(padding) = 40
+       Y = 20(root) + 20(padding) = 40
+       Width = 200
+       Height = 600 - 40(padding top/bot) = 560 -->
+  <rect x="40" y="40" width="200" height="560" class="sidebar" />
+  <text x="140" y="310" class="text-title">Sidebar</text>
+  <text x="140" y="340" class="text-sub">Width: 200</text>
+  <text x="140" y="360" class="text-sub">MarginRight: 20</text>
+
+  <!-- Margin indication -->
+  <line x1="240" y1="320" x2="260" y2="320" stroke="#94a3b8" stroke-width="2" />
+  <text x="250" y="315" class="text-note" text-anchor="middle">20</text>
+
+  <!-- Content:
+       X = 40(sidebar x) + 200(sidebar width) + 20(margin) = 260
+       Y = 40
+       Width = 800 - 20(pad left) - 200(sidebar) - 20(margin) - 20(pad right) = 540
+       Height = 560 -->
+  <rect x="260" y="40" width="540" height="560" class="content" />
+  <text x="530" y="310" class="text-title">Content Area</text>
+  <text x="530" y="340" class="text-sub">FlexGrow: 1</text>
+  <text x="530" y="360" class="text-sub">(Calculated Width: 540)</text>
+</svg>

@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\YogaSharp\YogaSharp.csproj"/>
+        <ProjectReference Include="..\YogaSharp.Layout\YogaSharp.Layout.csproj"/>
     </ItemGroup>
 
 </Project>
