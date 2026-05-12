@@ -11,7 +11,7 @@
         <Authors>CreetQuet</Authors>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
-        <PackageIcon>logo.svg</PackageIcon>
+        <PackageIcon>logo.png</PackageIcon>
         <Description>Managed modern layout API for Yoga layout engine.</Description>
         <Title>YogaSharp.Layout</Title>
     </PropertyGroup>
@@ -19,7 +19,7 @@
     <ItemGroup>
         <None Include="..\README.md" Pack="true" PackagePath="\" />
         <None Include="..\THIRD-PARTY-NOTICES.txt" Pack="true" PackagePath="\" />
-        <None Include="..\assets\logo.svg" Pack="true" PackagePath="\" />
+        <None Include="..\assets\logo.png" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
