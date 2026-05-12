@@ -9,6 +9,7 @@
         <PackageId>YogaSharp</PackageId>
         <Version>1.0.0</Version>
         <Authors>CreetQuet</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <Description>Managed wrapper for Yoga layout engine.</Description>
         <Title>YogaSharp</Title>
     </PropertyGroup>
