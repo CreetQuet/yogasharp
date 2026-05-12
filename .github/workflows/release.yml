@@ -16,9 +16,6 @@ jobs:
             artifact_name: win-x64
             arch_flag: ""
           - os: macos-latest
-            artifact_name: osx-x64
-            arch_flag: "x64"
-          - os: macos-latest
             artifact_name: osx-arm64
             arch_flag: "arm64"
     runs-on: ${{ matrix.os }}
@@ -71,12 +68,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: native-artifacts-win-x64
-          path: YogaSharp.Native/artifacts/
-          
-      - name: Download macOS (Intel) Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: native-artifacts-osx-x64
           path: YogaSharp.Native/artifacts/
           
       - name: Download macOS (ARM64) Artifacts
