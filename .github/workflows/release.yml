@@ -48,7 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout
+        uses: actions/checkout@v5
       
       - name: Setup .NET
         uses: actions/setup-dotnet@v5
@@ -75,14 +76,24 @@ jobs:
         with:
           name: native-artifacts-osx-arm64
           path: YogaSharp.Native/artifacts/
-          
-      - name: Pack NuGet
+
+      - name: Restore dependencies
+        run: dotnet restore YogaSharp.sln
+
+      - name: Build solution
+        run: dotnet build YogaSharp.sln --configuration Release --no-restore
+
+      - name: Extract version from release tag
+        id: version
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
+          V=${GITHUB_REF_NAME#v}
           if [ "${{ github.event.release.prerelease }}" == "true" ]; then
-            VERSION="${VERSION}-preview"
+            V="${V}-preview"
           fi
-          dotnet pack YogaSharp/YogaSharp.csproj -c Release -p:PackageVersion=$VERSION -o ./out
+          echo "VERSION=$V" >> $GITHUB_OUTPUT
+          
+      - name: Pack YogaSharp
+        run: dotnet pack YogaSharp/YogaSharp.csproj --configuration Release --no-build -p:PackageVersion=${{ steps.version.outputs.VERSION }} -o ./out
           
       - name: Upload NuGet Package
         uses: actions/upload-artifact@v4
