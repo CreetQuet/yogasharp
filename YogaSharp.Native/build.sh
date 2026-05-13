@@ -45,7 +45,7 @@ rm -rf *
 cmake $CMAKE_FLAGS ..
 cmake --build . --config Release
 
-mkdir -p "$ARTIFACTS_DIR/$ARTIFACT_FOLDER"
-cp "libyoga.$LIB_EXT" "$ARTIFACTS_DIR/$ARTIFACT_FOLDER/libyoga.$LIB_EXT"
+mkdir -p "$ARTIFACTS_DIR/$ARTIFACT_FOLDER/native"
+cp "libyoga.$LIB_EXT" "$ARTIFACTS_DIR/$ARTIFACT_FOLDER/native/libyoga.$LIB_EXT"
 
 echo "Build complete. Artifacts in $ARTIFACTS_DIR/$ARTIFACT_FOLDER"

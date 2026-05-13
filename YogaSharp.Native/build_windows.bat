@@ -13,7 +13,7 @@ echo Building for win-x64...
 cmake -A x64 -DCMAKE_BUILD_TYPE=Release ..
 cmake --build . --config Release
 
-if not exist "%ARTIFACTS_DIR%\win-x64" mkdir "%ARTIFACTS_DIR%\win-x64"
-copy /Y "Release\yoga.dll" "%ARTIFACTS_DIR%\win-x64\yoga.dll"
+if not exist "%ARTIFACTS_DIR%\win-x64\native" mkdir "%ARTIFACTS_DIR%\win-x64\native"
+copy /Y "Release\yoga.dll" "%ARTIFACTS_DIR%\win-x64\native\yoga.dll"
 
 echo Build complete. Artifacts in %ARTIFACTS_DIR%\win-x64

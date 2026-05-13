@@ -19,43 +19,116 @@ internal static class NativeLoader {
     private static IntPtr DllImportResolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath) {
         if (libraryName != "yoga") return IntPtr.Zero;
 
+        string rid = GetRuntimeIdentifier();
+        string libraryFileName = GetLibraryFileName();
+        
+        var probeDirs = new List<string>();
+
+        string assemblyDir = string.Empty;
+        if (!string.IsNullOrEmpty(assembly.Location)) {
+            assemblyDir = Path.GetDirectoryName(assembly.Location) ?? string.Empty;
+        }
+
+        if (!string.IsNullOrEmpty(assemblyDir)) {
+            probeDirs.Add(assemblyDir);
+        }
+
+
+        string baseDir = AppContext.BaseDirectory;
+        if (!string.IsNullOrEmpty(baseDir) && baseDir != assemblyDir) {
+            probeDirs.Add(baseDir);
+        }
+
+
+        string cwd = Directory.GetCurrentDirectory();
+        if (!string.IsNullOrEmpty(cwd) && cwd != assemblyDir && cwd != baseDir) {
+            probeDirs.Add(cwd);
+        }
+
+
+        foreach (string dir in probeDirs) {
+            string nugetPath = Path.Combine(dir, "runtimes", rid, "native", libraryFileName);
+            if (TryLoad(nugetPath, out IntPtr handle)) return handle;
+
+
+            string legacyPath = Path.Combine(dir, "runtimes", rid, libraryFileName);
+            if (TryLoad(legacyPath, out handle)) return handle;
+
+
+            string flatPath = Path.Combine(dir, libraryFileName);
+            if (TryLoad(flatPath, out handle)) return handle;
+        }
+
+
+        string? nugetCache = GetNuGetPackagesPath();
+        if (nugetCache != null) {
+            string packageBase = Path.Combine(nugetCache, "yogasharp.core");
+            if (Directory.Exists(packageBase)) {
+                try {
+                    var versionDirs = Directory.GetDirectories(packageBase)
+                        .OrderByDescending(d => d)
+                        .ToArray();
+
+                    foreach (string versionDir in versionDirs) {
+                        string cachePath = Path.Combine(versionDir, "runtimes", rid, "native", libraryFileName);
+                        if (TryLoad(cachePath, out IntPtr handle)) return handle;
+                    }
+                } catch {
+                }
+            }
+        }
+
+
+        return NativeLibrary.Load(libraryName, assembly, searchPath);
+    }
+
+    private static bool TryLoad(string path, out IntPtr handle) {
+        handle = IntPtr.Zero;
+        if (!File.Exists(path)) return false;
+        return NativeLibrary.TryLoad(path, out handle);
+    }
+
+    private static string GetRuntimeIdentifier() {
         string os;
-        string ext;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
             os = "win";
-            ext = "dll";
         } else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
             os = "linux";
-            ext = "so";
         } else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
             os = "osx";
-            ext = "dylib";
         } else {
             throw new PlatformNotSupportedException("Unsupported OS for Yoga layout engine.");
         }
 
-        string arch = RuntimeInformation.ProcessArchitecture.ToString().ToLower();
-        if (arch == "x86_64") arch = "x64";
-        if (arch == "aarch64") arch = "arm64";
+        string arch = RuntimeInformation.ProcessArchitecture switch {
+            Architecture.X64 => "x64",
+            Architecture.X86 => "x86",
+            Architecture.Arm64 => "arm64",
+            Architecture.Arm => "arm",
+            _ => RuntimeInformation.ProcessArchitecture.ToString().ToLower()
+        };
 
-        string artifactFolder = $"{os}-{arch}";
-        string libraryFileName = os == "win" ? $"yoga.{ext}" : $"libyoga.{ext}";
+        return $"{os}-{arch}";
+    }
 
-        string assemblyDir = Path.GetDirectoryName(assembly.Location) ?? string.Empty;
+    private static string GetLibraryFileName() {
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return "yoga.dll";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) return "libyoga.dylib";
+        return "libyoga.so";
+    }
 
-        // Try exact runtime path
-        string runtimesPath = Path.Combine(assemblyDir, "runtimes", artifactFolder, "native", libraryFileName);
-        if (File.Exists(runtimesPath)) return NativeLibrary.Load(runtimesPath);
+    private static string? GetNuGetPackagesPath() {
+        string? nugetPackages = Environment.GetEnvironmentVariable("NUGET_PACKAGES");
+        if (!string.IsNullOrEmpty(nugetPackages) && Directory.Exists(nugetPackages))
+            return nugetPackages;
 
-        // Try fallback runtime path
-        runtimesPath = Path.Combine(assemblyDir, "runtimes", artifactFolder, libraryFileName);
-        if (File.Exists(runtimesPath)) return NativeLibrary.Load(runtimesPath);
+        string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (string.IsNullOrEmpty(home)) return null;
 
-        // Try flat copy
-        string flatPath = Path.Combine(assemblyDir, libraryFileName);
-        if (File.Exists(flatPath)) return NativeLibrary.Load(flatPath);
+        string defaultPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? Path.Combine(home, ".nuget", "packages")
+            : Path.Combine(home, ".nuget", "packages");
 
-        // Fallback to runtime default mechanism
-        return NativeLibrary.Load(libraryName, assembly, searchPath);
+        return Directory.Exists(defaultPath) ? defaultPath : null;
     }
 }
