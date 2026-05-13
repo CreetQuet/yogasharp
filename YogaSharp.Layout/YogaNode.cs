@@ -112,12 +112,102 @@ public sealed class YogaNode : IDisposable {
         set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.All, value);
     }
 
+    public float PaddingLeft
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Left, value);
+    }
+
+    public float PaddingTop
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Top, value);
+    }
+
+    public float PaddingRight
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Right, value);
+    }
+
+    public float PaddingBottom
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Bottom, value);
+    }
+
+    public float PaddingStart
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Start, value);
+    }
+
+    public float PaddingEnd
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.End, value);
+    }
+
+    public float PaddingHorizontal
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Horizontal, value);
+    }
+
+    public float PaddingVertical
+    {
+        set => YogaNative.YGNodeStyleSetPadding(_handle.DangerousGetHandle(), YGEdge.Vertical, value);
+    }
+
     public float Margin {
         set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.All, value);
     }
 
+    public float MarginLeft
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Left, value);
+    }
+
+    public float MarginTop
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Top, value);
+    }
+
+    public float MarginRight
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Right, value);
+    }
+
+    public float MarginBottom
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Bottom, value);
+    }
+
+    public float MarginStart
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Start, value);
+    }
+
+    public float MarginEnd
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.End, value);
+    }
+
+    public float MarginHorizontal
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Horizontal, value);
+    }
+
+    public float MarginVertical
+    {
+        set => YogaNative.YGNodeStyleSetMargin(_handle.DangerousGetHandle(), YGEdge.Vertical, value);
+    }
+
     public float Gap {
         set => YogaNative.YGNodeStyleSetGap(_handle.DangerousGetHandle(), YGGutter.All, value);
+    }
+
+    public float GapColumn
+    {
+        set => YogaNative.YGNodeStyleSetGap(_handle.DangerousGetHandle(), YGGutter.Column, value);
+    }
+
+    public float GapRow
+    {
+        set => YogaNative.YGNodeStyleSetGap(_handle.DangerousGetHandle(), YGGutter.Row, value);
     }
 
     public FlexDirection FlexDirection {
