@@ -18,9 +18,6 @@ jobs:
           - os: macos-latest
             artifact_name: osx-arm64
             arch_flag: "arm64"
-          - os: macos-13
-            artifact_name: osx-x64
-            arch_flag: "x64"
     runs-on: ${{ matrix.os }}
     
     steps:
@@ -80,11 +77,7 @@ jobs:
           name: native-artifacts-osx-arm64
           path: YogaSharp.Native/artifacts/
           
-      - name: Download macOS (x64) Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: native-artifacts-osx-x64
-          path: YogaSharp.Native/artifacts/
+
 
       - name: Restore dependencies
         run: dotnet restore YogaSharp.sln

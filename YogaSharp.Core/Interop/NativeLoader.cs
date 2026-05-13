@@ -125,9 +125,7 @@ internal static class NativeLoader {
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         if (string.IsNullOrEmpty(home)) return null;
 
-        string defaultPath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? Path.Combine(home, ".nuget", "packages")
-            : Path.Combine(home, ".nuget", "packages");
+        string defaultPath = Path.Combine(home, ".nuget", "packages");
 
         return Directory.Exists(defaultPath) ? defaultPath : null;
     }
